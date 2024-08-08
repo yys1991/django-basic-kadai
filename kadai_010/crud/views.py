@@ -11,3 +11,4 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'crud/product_detail.html'
     context_object_name = 'product'
+    paginate_by = 3
