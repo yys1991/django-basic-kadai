@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品詳細</title>
+</head>
+<body>
+    <h1>商品詳細</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>価格</th>
+                <th>カテゴリ</th>
+                <th>画像</th>
+                <th>商品詳細の説明</th>
+            </tr>     
+        </thead>
+        {% for product in object_list %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.price }} 円</td>
+            <td>{{ product.category }}</td>
+            <td><img src="{{ product.img.url }}" style="width:100px; height:auto;"></td>
+            <td>{{ product.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {# ページの表示 #}
+     {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} ページ<br>
+ 
+     {# 前へ #}
+     {% if page_obj.has_previous %}
+     <a href="?page=1">&laquo; 先頭</a>
+     <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
+     {% endif %}
+ 
+     {# 次へ #}
+     {% if page_obj.has_next %}
+     <a href="?page={{ page_obj.next_page_number }}">次へ</a>
+     <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+     {% endif %}
+</body>
+</html>
