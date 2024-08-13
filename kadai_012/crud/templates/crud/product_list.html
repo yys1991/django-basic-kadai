@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品詳細</title>
+    <title>商品一覧</title>
 </head>
 <body>
-    <h1>商品詳細</h1>
+    <h1>商品一覧</h1>
+    <a href="{% url 'new' %}">新規作成</a>
     <table border="1">
         <thead>
             <tr>
@@ -15,7 +16,7 @@
                 <th>価格</th>
                 <th>カテゴリ</th>
                 <th>画像</th>
-                <th>商品詳細の説明</th>
+                <th>アクション</th>
             </tr>     
         </thead>
         {% for product in object_list %}
@@ -24,7 +25,12 @@
             <td>{{ product.price }} 円</td>
             <td>{{ product.category }}</td>
             <td><img src="{{ product.img.url }}" style="width:100px; height:auto;"></td>
-            <td>{{ product.description }}</td>
+            <td>
+                <button class="btn btn-danger" onclick="location.href='{% url 'detail' pk=product.pk %}'">詳細</button>
+                <button class="btn btn-primary" onclick="location.href='{% url 'edit' pk=product.pk %}'">編集</button>
+                <button class="btn btn-danger" onclick="location.href='{% url 'delete' pk=product.pk %}'">削除</button>
+                
+            </td>
         </tr>
         {% endfor %}
     </table>

@@ -16,15 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from crud.views import ProductListView, ProductDetailView
-from django.conf import settings
-from django.conf.urls.static import static
+from crud import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', ProductListView.as_view(), name='product_list'),    
-    path('<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
+    path('', views.TopView.as_view(), name="top"),
+    path('crud/', views.ProductListView.as_view(), name="list"),
+    path('crud/new/', views.ProductCreateView.as_view(), name="new"),
+    path('crud/edit/<int:pk>', views.ProductUpdateView.as_view(), name="edit"),
+    path('crud/delete/<int:pk>', views.ProductDeleteView.as_view(), name="delete"),
+    path('crud/<int:pk>', views.ProductDetailView.as_view(), name="detail"),
 ]
 
-if settings.DEBUG:
-    urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

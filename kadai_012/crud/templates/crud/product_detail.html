@@ -3,43 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>商品詳細</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 50%;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
 <body>
     <h1>商品詳細</h1>
     <table>
         <tr>
             <th>商品名</th>
-            <th>価格</th>
-            <th>カテゴリ</th>
-            <th>画像</th>
-            <th>商品詳細の説明</th>
+            <td>{{ product.name }}</td>
         </tr>
         <tr>
-            <td>{{ product.name }}</td>
+            <th>価格</th>
             <td>{{ product.price }} 円</td>
-            <td>{{ product.category }} 円</td>
-            <td><img src="{{ product.image.url }}" alt="{{ product.name }}" width="100"></td>
-    <td>
-      <a href="{% url 'edit_product' product.id %}">編集</a>
-      <a href="{% url 'delete_product' product.id %}">削除</a>
         </tr>
     </table>
-    <a href="{% url 'product_list' %}">戻る</a>
-</body>
-</html>
+    <a href = "{% url 'list' %}">戻る</a>
+    </html>
