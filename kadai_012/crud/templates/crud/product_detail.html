@@ -15,6 +15,18 @@
             <th>価格</th>
             <td>{{ product.price }} 円</td>
         </tr>
+        <tr>
+            <th>カテゴリ</th>
+            <td>{{ product.category }} </td>
+        </tr>
+        <tr>
+            <th>画像</th>
+            <td><img src="{{ product.img.url }}" style="width:100px; height:auto;"></td>
+            </tr>
+            <tr>
+            <th>description</th>
+            <td>{{ product.description }} </td>
+            </tr>        </tr>
     </table>
     <a href = "{% url 'list' %}">戻る</a>
     </html>
