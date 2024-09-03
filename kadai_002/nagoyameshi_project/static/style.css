@@ -1,3 +1,7 @@
 body{
-    background:orange;
+    background:#F9E1A0;
+}
+
+.bg-primary {
+    background-color: #F9A955 !important;
 }
