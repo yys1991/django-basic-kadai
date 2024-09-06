@@ -16,11 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from nagoyameshi.views import TopView,RestaurantView
+from nagoyameshi.views import TopView,RestaurantView,ReviewView,FavoriteView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("restaurant/<int:pk>/",RestaurantView.as_view(), name="restaurant"),
     path("",TopView.as_view(), name="top"),
-    path('',include("nagoyameshi.urls")),
+    path("restaurant/<int:pk>/",RestaurantView.as_view(), name="restaurant"),
+    path("review/<int:pk>/",ReviewView.as_view(), name="review"),
+    path("favorite/<int:pk>/",FavoriteView.as_view(), name="favorite"),
+
+    path('accounts/', include('allauth.urls')),
 ]

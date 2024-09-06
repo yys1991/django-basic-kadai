@@ -1,22 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views import View
-from django.views.generic import TemplateView
-
-class IndexView(View):
-
-    def get(self, request, *args, **kwargs):
-
-        return render(request,"nagoyameshi/index.html")
-
-index   = IndexView.as_view()
-
-class TopView(TemplateView):
-    template_name="top.html"
-
-from.models import Restaurant,Category
-
+from .models import Restaurant,Category,Review
+from .forms import ReviewForm,FavoriteForm
 from django.db.models import Q
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class TopView(View):
     def get(self,request):
@@ -55,10 +43,7 @@ class TopView(View):
 
 
 
-
-
-
-class RestaurantView(View):
+class RestaurantView(LoginRequiredMixin,View):
     def get(self,request,pk):
         
         print(pk)
@@ -67,34 +52,60 @@ class RestaurantView(View):
 
         context["restaurant"] = Restaurant.objects.filter(id=pk).first()
 
+        context["reviews"] = Review.objects.filter(restaurant=pk)
+
         return render(request, "restaurant.html",context)
 
 
-class ReviewView(View):
-    def post(self,request):        
+class ReviewView(LoginRequiredMixin, View):
+    def post(self,request,pk):
+
+        print(pk, "に対してレビュー")
+
+        restaurant = Restaurant.objects.filter(id=pk).first()
+        request.user
+        request.POST["content"]        
+
+        """
+        review = Review(restaurant=restaurant, user=request.user, content=request.POST["content"])
+        review.save()   
+        """
+        
+        copied = request.POST.copy()
+        copied["user"] = request.user
+        copied["restaurant"] = restaurant
+
+        ReviewForm(copied)    
+
+        if form.is_valid():
+            print("バリデーションOK")
+            form.save()
+        else:
+            print(form.errors)
 
         return redirect("top")
 
 
-from django.shortcuts import render,redirect
+class FavoriteView(LoginRequiredMixin,View):
+    def post(self, request,pk):
+        restaurant = Restaurant.objects.filter(id=pk).first()
 
-from django.views import View
-from .models import Topic
+        copied = request.POST.copy()
+        copied["user"] = request.user
+        copied["restaurant"] = restaurant
 
-class IndexView(View):
+        form = FavoriteForm(copied)
 
-    def get(self, request, *args, **kwargs):
+        if form.is_valid():
+            print("バリデーションOK")
+            form.save()
+        else:
+            print(form.errors)
 
-        topics  = Topic.objects.all()
-        context = { "topics":topics }
+        return redirect("top")
 
-        return render(request,"bbs/index.html",context)
 
-    def post(self, request, *args, **kwargs):
+class MypageView(LoginRequiredMixin,View):
+    def get(self, request):
 
-        posted  = Topic( comment = request.POST["comment"] )
-        posted.save()
-
-        return redirect("bbs:index")
-
-index   = IndexView.as_view()
+        return render(request, "mypage.html")

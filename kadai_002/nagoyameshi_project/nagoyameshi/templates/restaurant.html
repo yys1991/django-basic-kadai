@@ -16,21 +16,35 @@
 
 <h2>店舗レビューフォーム</h2>
 
-<form action="" method="post">
-
+<form action="{% url 'review' restaurant.id %}" method="post">
     {% csrf_token %}
 
     <textarea name="content" maxlength="100"></textarea>
     <input type="submit" value="投稿">
     </form>
 
+    <h2>店舗レビュー一覧</h2>
 
+    {{ reviews }}
+    
+    {% for review in reviews %}
+<div class="border">
+    <div>投稿日時: {{ review.created_at }}</div>
+    <div>投稿者: {{ review.user }}</div>
+    <div>レビュー: {{ review.content }}</div>
+</div>
+{% endfor %}
 
 
     <h2>店舗予約</h2>
 
 
     <h2>お気に入りする</h2>
+
+    <form action="{% url 'favorite' restaurant.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="お気に入りする">
+    </form>
 
 
     {% endblock %}

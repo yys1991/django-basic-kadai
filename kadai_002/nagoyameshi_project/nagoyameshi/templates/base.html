@@ -17,6 +17,13 @@
         <h1 class="bg-primary text-white">NAGOYAMESHI</h1>
     </header>
 
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'account_logout' %}">ログアウト</a>
+    {% else %}
+    <a href="{% url 'account_login' %}">ログイン</a>
+    <a href="{% url 'account_signup' %}">アカウント新規作成</a>
+    {% endif %}
+
     {% block main %}
     {% endblock %}
 
