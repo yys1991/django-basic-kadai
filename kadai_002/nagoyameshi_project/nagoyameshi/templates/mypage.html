@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h2>マイページ</h2>
+
+<h2>お気に入りした店舗</h2>
+
+{% for favorite in favorites %}
+<div>
+    <a href="{% url 'restaurant' favorite.restaurant.id %}">{{ favorite.restaurant.name }}</a>
+</div>
+{% endfor %}
+
+
+<h2>投稿したレビュー一覧</h2>
+
+{% for review in reviews %}
+<div>
+    <div>店舗: {{ review.restaurant.name }}</div>
+    <div>投稿内容: {{ review.content }}</div>
+</div>
+{% endfor %}
+
+<h2>予約した店舗一覧</h2>
+
+{% for reservation in reservations %}
+<div>
+    <div>店舗: {{ reservation.restaurant.name }}</div>
+    <div>予約日時: {{ reservation.datetime }}</div>
+    <div>予約人数: {{ reservation.headcount }}</div>
+</div>
+{% endfor %}
+
+
+{% endblock %}

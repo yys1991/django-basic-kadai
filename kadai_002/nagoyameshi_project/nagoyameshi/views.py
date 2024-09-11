@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
-from .models import Restaurant,Category,Review
-from .forms import ReviewForm,FavoriteForm
+from .models import Restaurant,Category,Review,Favorite,Reservation
+from .forms import ReviewForm,FavoriteForm,ReservationForm
 from django.db.models import Q
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -105,7 +105,34 @@ class FavoriteView(LoginRequiredMixin,View):
         return redirect("top")
 
 
+class ReservationView(LoginRequiredMixin,View):
+    def post(self, request,pk):
+
+        restaurant = Restaurant.objects.filter(id=pk).first()   
+        copied = request.POST.copy()
+        copied["user"] = request.user
+        copied["restaurant"] = restaurant
+
+
+        form = ReservationForm(copied)
+
+        if form.is_valid():
+            print("バリデーションOK")
+            form.save()
+        else:
+            print(form.errors)
+
+        return redirect("top")
+
+
+
 class MypageView(LoginRequiredMixin,View):
     def get(self, request):
 
-        return render(request, "mypage.html")
+        context = {}
+
+        context["favorites"] = Favorite.objects.filter(user=request.user)
+        context["Reviews"] = Review.objects.filter(user=request.user)
+        context["Reservations"] = Reservation.objects.filter(user=request.user)
+
+        return render(request, "mypage.html", context)

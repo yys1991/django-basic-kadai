@@ -38,6 +38,11 @@
 
     <h2>店舗予約</h2>
 
+    <form action="{% url 'reservation' restaurant.id %}" method="post">        {% csrf_token %}
+
+        <input type="datetime-local" name="datetime">
+        <input type="text" name="headcount">
+        <input type="submit" value="予約する">
 
     <h2>お気に入りする</h2>
 
