@@ -31,5 +31,14 @@
 </div>
 {% endfor %}
 
+<h2>有料会員登録</h2>
+
+{# CheckoutView の postメソッドへ行くには？ #}
+
+<form action="{% url 'checkout' %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="有料会員登録をする">
+</form>
+
 
 {% endblock %}

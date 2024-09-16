@@ -6,6 +6,12 @@ from django.db.models import Q
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.conf import settings
+from django.urls import reverse_lazy
+import stripe
+
+stripe.api_key  = settings.STRIPE_API_KEY
+
 class TopView(View):
     def get(self,request):
         query = Q()
@@ -132,7 +138,64 @@ class MypageView(LoginRequiredMixin,View):
         context = {}
 
         context["favorites"] = Favorite.objects.filter(user=request.user)
-        context["Reviews"] = Review.objects.filter(user=request.user)
-        context["Reservations"] = Reservation.objects.filter(user=request.user)
+        context["reviews"] = Review.objects.filter(user=request.user)
+        context["reservations"] = Reservation.objects.filter(user=request.user)
 
         return render(request, "mypage.html", context)
+
+
+class CheckoutView(LoginRequiredMixin,View):
+    def post(self, request, *args, **kwargs):
+
+        
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    'price': settings.STRIPE_PRICE_ID,
+                    'quantity': 1,
+                },
+            ],
+            payment_method_types=['card'],
+            mode='subscription',
+
+        
+            success_url=request.build_absolute_uri(reverse_lazy("success")) + '?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=request.build_absolute_uri(reverse_lazy("mypage")),
+        )
+
+        
+        print( checkout_session["id"] )
+
+        return redirect(checkout_session.url)
+
+
+class SuccessView(LoginRequiredMixin,View):
+    def get(self, request, *args, **kwargs):
+
+        print("有料会員登録しました！")
+
+
+        if "session_id" not in request.GET:
+            print("セッションIDがありません。")
+            return redirect("mypage")
+
+
+        try:
+            checkout_session_id = request.GET['session_id']
+            checkout_session    = stripe.checkout.Session.retrieve(checkout_session_id)
+        except:
+            print( "このセッションIDは無効です。")
+            return redirect("mypage")
+
+        print(checkout_session)
+
+        if checkout_session["payment_status"] != "paid":
+            print("未払い")
+            return redirect("mypage")
+
+        print("支払い済み")
+
+
+        return redirect("mypage")
+
+
