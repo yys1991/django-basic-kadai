@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from nagoyameshi.views import TopView,RestaurantView,ReviewView,FavoriteView,ReservationView,MypageView,SuccessView,CheckoutView
+from nagoyameshi.views import TopView,RestaurantView,ReviewView,FavoriteView,ReservationView,MypageView,SuccessView,CheckoutView,PremiumView,PortalView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +30,10 @@ urlpatterns = [
 
     path("success/", SuccessView.as_view(), name="success"),
     path("checkout/", CheckoutView.as_view(), name="checkout"),
+    path("premium/", PremiumView.as_view(), name="premium"),
+    path("portal/", PortalView.as_view(), name="portal"),
+
+
 
 
     path('accounts/', include('allauth.urls')),

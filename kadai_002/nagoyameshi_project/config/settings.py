@@ -136,10 +136,58 @@ STATICFILES_DIRS = [ BASE_DIR / "static" ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-import os
+STRIPE_API_KEY          = "sk_test_51Pz8D4BphK52TltJRySVuzU2UAJvApLE3NxGk2pvHI0X1JX6NIH4fHvmz4ImbmytjxPBSPy9S3YaIEPkLBxPiA0G00lu2eU2aD"
+STRIPE_PUBLISHABLE_KEY  = "pk_test_51Pz8D4BphK52TltJs0yS5R1a9XJkKNYDk9jGc2JXTcjPeVuNBxarvSRCszfBL0AC8rVrlIvXcQOx0spd2iZV39mC00MPGeHzSU"
+STRIPE_PRICE_ID         = "price_1Pz8QtBphK52TltJ6naxKioa"
 
-if "STRIPE_PUBLISHABLE_KEY" in os.environ and "STRIPE_API_KEY" in os.environ and "STRIPE_PRICE_ID" in os.environ:
-    STRIPE_PUBLISHABLE_KEY  = os.environ["STRIPE_PUBLISHABLE_KEY"]
-    STRIPE_API_KEY          = os.environ["STRIPE_API_KEY"]
-    STRIPE_PRICE_ID         = os.environ["STRIPE_PRICE_ID"]
 
+if not DEBUG:
+
+    INSTALLED_APPS.append('cloudinary')
+    INSTALLED_APPS.append('cloudinary_storage')
+
+    ALLOWED_HOSTS = [ os.environ["HOST"] ]
+
+    SECRET_KEY = os.environ["SECRETKEY"]
+    
+    MIDDLEWARE = [ 
+        'django.middleware.security.SecurityMiddleware',
+        'whitenoise.middleware.WhiteNoiseMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        ]
+
+    STATIC_ROOT = BASE_DIR / 'static'
+
+    
+    DATABASES = { 
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'NAME'    : os.environ["DB_NAME"],
+                'USER'    : os.environ["DB_USER"],
+                'PASSWORD': os.environ["DB_PASSWORD"],
+                'HOST'    : os.environ["DB_HOST"],
+                'PORT': '5432',
+                }
+            }
+
+    
+    import dj_database_url
+
+    db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
+    DATABASES['default'].update(db_from_env)
+    
+
+    CLOUDINARY_STORAGE = { 
+            'CLOUD_NAME': os.environ["CLOUD_NAME"], 
+            'API_KEY'   : os.environ["API_KEY"], 
+            'API_SECRET': os.environ["API_SECRET"],
+            "SECURE"    : True,
+            }
+
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
+    

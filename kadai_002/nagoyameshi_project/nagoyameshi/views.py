@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.views import View
-from .models import Restaurant,Category,Review,Favorite,Reservation
+from .models import Restaurant,Category,Review,Favorite,Reservation,PremiumUser
 from .forms import ReviewForm,FavoriteForm,ReservationForm
 from django.db.models import Q
 
@@ -195,6 +195,66 @@ class SuccessView(LoginRequiredMixin,View):
 
         print("支払い済み")
 
+        premium_user = PremiumUser()
+        premium_user.user = request.user
+        premium_user.premium_code = checkout_session["customer"]
+        premium_user.save()
+
+
+        return redirect("mypage")
+
+
+# 有料会員の設定
+class PortalView(LoginRequiredMixin,View):
+    def get(self, request, *args, **kwargs):
+
+        # userフィールドが自分(request.user)の有料会員情報(PremiumUser)を取り出す
+        premium_user = PremiumUser.objects.filter(user=request.user).first()
+
+        if not premium_user:
+            print( "有料会員登録されていません")
+            return redirect("mypage")
+
+        # ユーザーモデルに記録しているカスタマーIDを使って、ポータルサイトへリダイレクト
+        portalSession   = stripe.billing_portal.Session.create(
+            customer    = premium_user.premium_code,
+            return_url  = request.build_absolute_uri(reverse_lazy("mypage")),
+        )
+
+        return redirect(portalSession.url)
+
+
+
+class PremiumView(View):
+    def get(self, request, *args, **kwargs):
+        
+        premium_user = PremiumUser.objects.filter(user=request.user).first()
+
+
+        if not premium_user:
+            print("カスタマーIDがセットされていません。")
+            return redirect("mypage")
+
+        try:
+            subscriptions = stripe.Subscription.list(customer=premium_user.premium_code)
+        except:
+            print("このカスタマーIDは無効です。")
+            premium_user.delete()
+
+            return redirect("mypage")
+
+
+        is_premium = False
+
+        for subscription in subscriptions.auto_paging_iter():
+            if subscription.status == "active":
+                print("サブスクリプションは有効です。")
+                is_premium = True
+
+        if is_premium:
+            print("有料会員です")
+        else:
+            print("有料会員ではない")
 
         return redirect("mypage")
 

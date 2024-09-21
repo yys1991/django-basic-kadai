@@ -33,12 +33,15 @@
 
 <h2>有料会員登録</h2>
 
-{# CheckoutView の postメソッドへ行くには？ #}
+{% if is_premium %}
+
+<a href="{% url 'portal' %}">有料会員設定</a>
+{% else %}
 
 <form action="{% url 'checkout' %}" method="post">
     {% csrf_token %}
     <input type="submit" value="有料会員登録をする">
 </form>
-
+{% endif %}
 
 {% endblock %}
